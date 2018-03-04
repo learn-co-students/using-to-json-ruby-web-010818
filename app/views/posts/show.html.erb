@@ -1,19 +1,24 @@
-<div class="authorName"><%= @post.author.name %></div>
-<a href="#" class="js-next" data-id="<%=@post.id%>">Next...</a>
-<h1 class="postTitle"><%= @post.title %></h1>
-<p class="postBody"><%= @post.description %></p>
+<a href='#' class='js-next' data-id='<%=@post.id%>'>Next...</a>
+<h1 class='postTitle'><%= @post.title %></h1>
+<p class='postBody'><%= @post.description %></p>
 
-<script type="text/javascript" charset="utf-8">
-$(function () {
-  $(".js-next").on("click", function() {
-    var nextId = parseInt($(".js-next").attr("data-id")) + 1;
-    $.get("/posts/" + nextId + "/post_data", function(data) {
-      $(".authorName").text(data["author"]["name"]);
-      $(".postTitle").text(data["title"]);
-      $(".postBody").text(data["description"]);
-      // re-set the id to current on the link
-      $(".js-next").attr("data-id", data["id"]);
-    });
-  });
-});
+<script type='text/javascript' charset='utf-8'>
+  document.getElementsByClassName('js-next')[0].addEventListener('click', (e) => {
+    const nextLink = document.getElementsByClassName('js-next')[0];
+    const nextId = parseInt(nextLink.dataset.id) + 1;
+    fetch(`http://localhost:3000/posts/${nextId}/post_data`)
+    .then(res => res.json())
+    .then(json => render(json));
+
+    function render(data) {
+      const author =  document.getElementsByClassName('authorName')[0];
+      author.innerText = data['author']['name'];
+      const title = document.getElementsByClassName('postTitle')[0];
+      title.innerText = data['title'];
+      const body = document.getElementsByClassName('postBody')[0];
+      body.innerText = data['description'];
+      //re-set the id to current on the link
+      nextLink.setAttribute('data-id', nextId - 1);
+    }
+  })
 </script>
